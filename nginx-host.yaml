@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\BIN\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nginx-host
+  name: nginx-host
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      io.kompose.service: nginx-host
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\BIN\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: nginx-host
+    spec:
+      containers:
+      - image: kdvel/dof-nginx:latest
+        imagePullPolicy: ""
+        name: nginx-host
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+          - mountPath: /site
+            name: web-site
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: web-site
+        hostPath:
+          path: /vagrant/app
+          type: Directory
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\BIN\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nginx-host
+  name: nginx-host
+spec:
+  ports:
+  - name: "80"
+    port: 80
+    nodePort: 30005
+    protocol: TCP
+  selector:
+    io.kompose.service: nginx-host
+  type: NodePort
+status:
+  loadBalancer: {}
